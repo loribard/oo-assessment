@@ -60,116 +60,88 @@ import random
 class Student(object):
     """Melon."""
 
-    def __init__(self, student_dictionary):
-        
-
-        self.first_name = student_dictionary["first_name"]
-        self.last_name = student_dictionary["last_name"]
-        self.address = student_dictionary['address']
-        print self.first_name,self.last_name,self.address
-
-
+    def __init__(self, first_name, last_name, address):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.address = address
+        self.score = 0
 
 
 class Question(object):
-	def __init__(self,type_of_test):
-		self.test_type = type_of_test["name"]
-		print self.test_type
-		self.questions = type_of_test["questions"]
-		print self.questions
-		#self.questions = type_of_test["questions"]
-		
-		#self.question_list = break_into_questions()
-		#self.question = question_dictionary["question"]
-		#self.correct_answer = question_dictionary["correct_answer"]
-		#print self.question, self.correct_answer
-	# def ask_question(self):
-	# 	first_question = radom.choice(self.questions.keys())
-	# 	print first_question
-	#def break_into_questions(self):
-		print len(self.questions), "Length"
+	def __init__(self, question_str, answer):
+		self.question_str = question_str
+		self.answer = answer
 
-	def separate_out_questions(self):
-		dictionary_of_questions = {}
-		i = 0
-		# for question in range(len(self.questions)):
-		# 	self.dictionary_of_questions[i] = self.questions[i]
-		# 	i+=1
-		# print self.dictionary_of_questions
-		individual_questions_and_answers = {}
-		# for list_of_questions in self.list_of_questions.keys():
-		# 	self.individual_questions_and_answers["question"] = "correct_answer"
-		# print self.individual_questions_and_answers
-		
-	#return self.individual_questions_and_answers
-
-	def get_individual_and_answers(self):
-		answer = 0
-		question1 = random.choice(individual_questions_and_answers.keys())
-		self.answer = raw_input(str(question1))
-		if self.individual_questions_and_answers[question1] == self.answer:
-			print "RIGHT"
-			answer += 1
+	def ask_and_evaluate(self):
+		answer = raw_input(self.question_str + " ")
+		is_correct = answer == self.answer
+		return is_correct
 
 
+class Exam(object):
+	def __init__(self, name):
+		self.name = name
+		self.questions = []
+
+	def add_question(self, question_str, answer):
+		q = Question(question_str, answer)
+		self.questions.append(q)
+
+	def score(self):
+		score = 0
+		for q in self.questions:
+			is_correct = q.ask_and_evaluate()
+			if is_correct:
+				score += 1
+		return score
+
+	def administer(self):
+		return self.score()
+
+class Quiz(Exam):
+	def administer(self):
+		score = self.score()
+		num_questions = len(self.questions)
+		is_passed = float(score)/num_questions >= 0.5
+		return is_passed
+			
 
 
-# question1 = Question({'question': 'What is the capital of Alberta?',
-#  'correct_answer': 'Edmonton'})
-# question2 = Question({'question': 'Who is the author of Python?',
-#  'correct_answer': 'Guido Van Rossum'})
-
-class Exam(Question):
-
-	def __init__(self,type_of_test):
-		#self.test_type = type_of_test["name"]
-		#self.questions = type_of_test["questions"]
-		super(Exam,self).__init__(type_of_test)
-		print self.test_type,self.questions
-	def exam_add_question(self,question,answer):
-		new_question = {"question":question,"correct_answer":answer}
-		print new_question
-		self.questions.append(new_question)
-		print self.questions
-		return self.questions
-		
-
-midterm = {'name':'Midterm',
- 'questions': [
-
-    {'question':'What is the capital of Alberta?',
-     'correct_answer': 'Edmonton'},
-
-    {'question': 'Who is the author of Python?',
-     'correct_answer': 'Guido Van Rossum' }]
-     }
-
-  
+def take_test(exam,student):
+	student.score = exam.administer()
 
 
-final = {'name':'Final',
- 'questions': [
+def example():
+	exam = Quiz('midterm')
+	exam.add_question("what's your name?","Lori")
+	exam.add_question("Where do you live?","Burlingame")
 
-    {'question':"Who is Ubermelon's competition?",
-     'correct_answer': 'Sqysh'},
+	student = Student('Lori','Bard','30 Knightwood Lane')
 
-    {'question': "What is Balloonicorn's favorite color?",
-     'correct_answer': 'Sparkles'}]
+	take_test(exam, student)
 
-}
-
-
-jasmine = Student({'first_name': 'Jasmine',
- 'last_name': 'Debugger',
- 'address': '0101 Computer Street'})
-
-jaqui = Student({'first_name': 'Jaqui',
- 'last_name': 'Console',
- 'address': '888 Binary Ave'})
-
-exam = Exam(midterm)
-exam.exam_add_question("What is the method for adding an element to a set?",".add()")
-exam.separate_out_questions()
+	return student.score
 
 
+if __name__ == '__main__':
+	print example()
 
+# questions1 = Question({"question":"What is the capital of Alberta?", "correct_answer":"Edmonton"})
+# questions2 = Question({"question":"Who is the author of Python?","correct_answer":"Guido Van Rossum"})
+# student_1 = Student({'first_name':'Lori',
+# 	'last_name':'Bard','address':'30 Knightwood Lane'})
+# exam = Exam({'name':'Midterm',
+#  'questions': [
+
+#     {'question':'What is the capital of Alberta?',
+#      'correct_answer': 'Edmonton'},
+
+#     {'question': 'Who is the author of Python?',
+#      'correct_answer': 'Guido Van Rossum' }
+
+#   ]
+# })
+
+# exam.add_question('What is your name?','Lori')
+# exam.administer()
+	
